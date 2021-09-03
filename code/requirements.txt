@@ -1,3 +1,4 @@
-torchaudia
+torchaudio
 librosa
 boto3
+librosa

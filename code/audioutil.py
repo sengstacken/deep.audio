@@ -16,6 +16,8 @@ import multiprocessing
 
 import scipy
 import librosa
+import torchaudio
+import torch
 import boto3
 from botocore import UNSIGNED
 from botocore.config import Config
@@ -72,7 +74,7 @@ def _fetch_data():
     ]
     for url, path in uri:
         with open(path, 'wb') as file_:
-        file_.write(requests.get(url).content)
+            file_.write(requests.get(url).content)
 
 _fetch_data()
 
@@ -143,11 +145,11 @@ def plot_waveform(waveform, sample_rate, title="Waveform", xlim=None, ylim=None)
         axes[c].plot(time_axis, waveform[c], linewidth=1)
         axes[c].grid(True)
         if num_channels > 1:
-        axes[c].set_ylabel(f'Channel {c+1}')
+            axes[c].set_ylabel(f'Channel {c+1}')
         if xlim:
-        axes[c].set_xlim(xlim)
+            axes[c].set_xlim(xlim)
         if ylim:
-        axes[c].set_ylim(ylim)
+            axes[c].set_ylim(ylim)
     figure.suptitle(title)
     plt.show(block=False)
 
@@ -163,13 +165,13 @@ def plot_specgram(waveform, sample_rate, title="Spectrogram", xlim=None):
     for c in range(num_channels):
         axes[c].specgram(waveform[c], Fs=sample_rate)
         if num_channels > 1:
-        axes[c].set_ylabel(f'Channel {c+1}')
+            axes[c].set_ylabel(f'Channel {c+1}')
         if xlim:
-        axes[c].set_xlim(xlim)
+            axes[c].set_xlim(xlim)
     figure.suptitle(title)
     plt.show(block=False)
 
-    def play_audio(waveform, sample_rate):
+def play_audio(waveform, sample_rate):
     waveform = waveform.numpy()
 
     num_channels, num_frames = waveform.shape
@@ -290,11 +292,11 @@ def _get_freq_ticks(sample_rate, offset, f_max):
     time, freq = [], []
     for exp in range(2, 5):
         for v in range(1, 10):
-        f = v * 10 ** exp
-        if f < sample_rate // 2:
-            t = _get_inverse_log_freq(f, sample_rate, offset) / sample_rate
-            time.append(t)
-            freq.append(f)
+            f = v * 10 ** exp
+            if f < sample_rate // 2:
+                t = _get_inverse_log_freq(f, sample_rate, offset) / sample_rate
+                time.append(t)
+                freq.append(f)
     t_max = _get_inverse_log_freq(f_max, sample_rate, offset) / sample_rate
     time.append(t_max)
     freq.append(f_max)
