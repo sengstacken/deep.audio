@@ -208,6 +208,21 @@ def plot_mel_fbank(fbank, title=None):
     axs.set_xlabel('mel bin')
     plt.show(block=False)
 
+def envelope(y, rate, threshold):
+    # tracks the signal with a rolling average.  Provides the ability to clean and remove dead audio
+    mask = []
+    y = pd.Series(y).apply(np.abs)
+    y_mean = y.rolling(window=int(rate/20),
+                       min_periods=1,
+                       center=True).max()
+    for mean in y_mean:
+        if mean > threshold:
+            mask.append(True)
+        else:
+            mask.append(False)
+    return mask, y_mean
+
+
 def get_spectrogram(
     n_fft = 400,
     win_len = None,
